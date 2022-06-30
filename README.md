@@ -4,5 +4,8 @@
 - 비디오의 길이가 16초보다 길면 alert를 띄워주고 이미지 업로드를 제한한다. (핵심 기능)
 - mui 버튼 사용
 
+
+![6](https://user-images.githubusercontent.com/55455103/176763746-bd322862-3796-4c3c-b498-1c2dd7b4bd5a.gif)
+
 # 자세한 설명 ↓↓↓↓
 https://github.com/ejzl521/Image_Uploader_React
