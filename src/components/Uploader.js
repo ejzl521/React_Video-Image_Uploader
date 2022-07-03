@@ -15,19 +15,17 @@ const Uploader = () => {
   const saveImage = (e) => {
     e.preventDefault();
     // 미리보기 url 만들기
-    const fileReader = new FileReader();
     // 파일이 존재하면 file 읽기
     if (e.target.files[0]) {
-      fileReader.readAsDataURL(e.target.files[0])
-    }
-    // 읽기 동작이 성공적으로 완료되었을 때
-    fileReader.onload = () => {
-      const fileType = e.target.files[0].type.split("/")[0]
-
+      // 새로운 파일 올리면 createObjectURL()을 통해 생성한 기존 URL을 폐기
+      URL.revokeObjectURL(file.preview_URL);
+      // 새로운 미리보기 URL 생성
+      const preview_URL = URL.createObjectURL(e.target.files[0]);
+      const fileType = e.target.files[0].type.split("/")[0];
       // video일 때 시간 제한 15초
       if (fileType === "video") {
         let videoElement = document.createElement("video");
-        videoElement.src = fileReader.result
+        videoElement.src = preview_URL;
         /*
           video 길이 제한!
           videoElement의 readyState가 4면 비디오가 로딩이 된 것이므로 길이를 판별할 수 있다
@@ -37,12 +35,14 @@ const Uploader = () => {
         const timer = setInterval(() => {
           if (videoElement.readyState == 4) {
             if (videoElement.duration > 16) {
-              alert("동영상의 길이가 16초보다 길면 안됩니다")
+              alert("동영상의 길이가 16초보다 길면 안됩니다");
+              // src에 넣지 않을 것이므로 미리보기 URL 제거
+              URL.revokeObjectURL(preview_URL);
             } else {
               setFile(
                 {
                   fileObject: e.target.files[0],
-                  preview_URL: fileReader.result,
+                  preview_URL: preview_URL,
                   type: fileType
                 }
               )
@@ -54,7 +54,7 @@ const Uploader = () => {
         setFile(
           {
             fileObject: e.target.files[0],
-            preview_URL: fileReader.result,
+            preview_URL: preview_URL,
             type: fileType
           }
         )
@@ -63,6 +63,8 @@ const Uploader = () => {
   }
   //  상태 초기화하기
   const deleteImage = () => {
+    // createObjectURL()을 통해 생성한 기존 URL을 폐기
+    URL.revokeObjectURL(file.preview_URL);
     setFile({
       fileObject: "",
       preview_URL: "img/default_image.png",
